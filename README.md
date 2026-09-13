@@ -1,75 +1,60 @@
+<div align="center">
+
 # SQLparser
 
-SQLparser is a small command line application written in pure Rust. It tokenizes
-and parses a subset of SQL statements and prints out the resulting abstract
-syntax tree (AST). It is intended as a demonstration of how to build a simple
-lexer and a Pratt parser without relying on external crates.
+**A dependency-free SQL tokenizer, Pratt expression parser, and interactive AST explorer.**
 
-## Features
+`Rust` · `Lexer` · `Pratt parser` · `No external crates`
 
-- Built-in lexer for numbers, strings, identifiers and keywords
-- Pratt style expression parser (arithmetic, comparison and logical operators)
-- AST representation for `SELECT` and `CREATE TABLE` statements, including column constraints
-- Interactive CLI for multi-line input
+</div>
 
-## Building
+SQLparser reads a focused subset of SQL, converts the input into tokens, builds an abstract syntax tree, and prints the parsed structure. It is intentionally organized without Cargo so the complete learning implementation remains small and visible.
 
-The repository is not organised as a Cargo project. You can compile it directly
-using `rustc`:
+## Supported surface
+
+- Numbers, quoted strings, identifiers, punctuation, and SQL keywords
+- Arithmetic and comparison expressions
+- Boolean expression precedence through Pratt parsing
+- `SELECT … FROM … WHERE … ORDER BY …`
+- `CREATE TABLE` statements and column constraints
+- Multi-line interactive input terminated by `;`
+
+This is a learning parser, not a validating implementation of the complete SQL standard.
+
+## Build
 
 ```bash
 rustc main.rs
 ```
 
-This produces an executable named `main` in the project directory.
-
-## Usage
-
-Run the compiled binary from your terminal:
+Run the result:
 
 ```bash
-./main
+./main        # macOS/Linux
+main.exe      # Windows
 ```
 
-Enter SQL statements terminated with a semicolon (`;`). Statements can span
-multiple lines. Use `Ctrl+Z` on an empty line to exit.
+Example input:
 
-The CLI prints the parsed `Statement` structure or an error if the statement
-cannot be parsed.
-
-### Example
-
-```
-> SELECT id, name FROM users WHERE id > 10 ORDER BY name ASC;
-Select {
-    columns: [
-        Identifier("id"),
-        Identifier("name"),
-    ],
-    from: "users",
-    where: Some(BinaryOperation {
-        left_operand: Box::new(Identifier("id")),
-        operator: GreaterThan,
-        right_operand: Box::new(Number(10)),
-    }),
-    orderby: [UnaryOperation {
-        operand: Box::new(Identifier("name")),
-        operator: Asc,
-    }],
-}
+```sql
+SELECT id, name
+FROM users
+WHERE id > 10
+ORDER BY name ASC;
 ```
 
-## Source Layout
+The CLI prints a Rust representation of the resulting `Statement` tree. Use the terminal's end-of-input shortcut on an empty line to exit (`Ctrl+Z`, then Enter on Windows; `Ctrl+D` on macOS/Linux).
 
-- `token.rs` – definitions of tokens and SQL keywords
-- `tokenizer.rs` – converts raw input into a stream of tokens
-- `statement.rs` – AST structures and display implementations
-- `parser.rs` – main Pratt parser that produces the AST
-- `main.rs` – interactive command line interface
+## Source map
 
-## Contributing
+| File | Responsibility |
+| --- | --- |
+| `token.rs` | Token and keyword definitions |
+| `tokenizer.rs` | Character stream to tokens |
+| `statement.rs` | AST types and display logic |
+| `parser.rs` | Statement parsing and Pratt expressions |
+| `main.rs` | Interactive command-line loop |
 
-Contributions in the form of bug reports, feature requests or pull requests are
-welcome. This project is intended primarily as a learning resource, so the code
-is deliberately kept simple and dependency free.
+## License
 
+Licensed under the [MIT License](LICENSE).
